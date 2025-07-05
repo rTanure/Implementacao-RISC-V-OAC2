@@ -1,0 +1,3 @@
+iverilog -Wall -o instruction_memory_tb.vvp instruction_memory_tb.v instruction_memory.v
+vvp instruction_memory_tb.vvp
+gtkwave instruction_memory_tb.vcd
