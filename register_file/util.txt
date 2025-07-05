@@ -1,0 +1,3 @@
+iverilog -Wall -o register_file_tb.vvp register_file_tb.v register_file.v
+vvp register_file_tb.vvp
+gtkwave register_file_tb.vcd
