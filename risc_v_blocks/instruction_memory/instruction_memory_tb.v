@@ -20,7 +20,7 @@ module instruction_memory_tb;
     for (i = 0; i < 10; i = i + 1) begin
       addr = i * 4;
       #10;
-      $display("Endereco: %h, Instrucao: %b", addr, instr);
+      $display("Endereco: %d, Instrucao: %b", addr, instr);
     end
     
     #10 $finish;

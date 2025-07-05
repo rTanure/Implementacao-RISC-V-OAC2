@@ -7,10 +7,10 @@ module instruction_memory (
 
   initial begin
     // Carrega o arquivo contendo o programa para a memoria de intruções
-    $readmemh("../program.hex", memory);
+    $readmemb("../../program.bin", memory);
   end
 
   // Atribui o valor da memória ao dado de instrução
-  assign instruction_data = memory[read_address[31:2]];
+  assign instruction_data = memory[read_address >> 2'd2];
 
 endmodule
