@@ -1,0 +1,63 @@
+$date
+	Sat Jul 05 18:58:40 2025
+$end
+$version
+	Icarus Verilog
+$end
+$timescale
+	1ps
+$end
+$scope module mux_4_to_1_tb $end
+$var wire 32 ! out [31:0] $end
+$var reg 32 " data_0 [31:0] $end
+$var reg 32 # data_1 [31:0] $end
+$var reg 32 $ data_2 [31:0] $end
+$var reg 32 % data_3 [31:0] $end
+$var reg 2 & sel [1:0] $end
+$scope module uut $end
+$var wire 32 ' input_0 [31:0] $end
+$var wire 32 ( input_1 [31:0] $end
+$var wire 32 ) input_2 [31:0] $end
+$var wire 32 * input_3 [31:0] $end
+$var wire 2 + sel [1:0] $end
+$var reg 32 , out [31:0] $end
+$upscope $end
+$upscope $end
+$enddefinitions $end
+$comment Show the parameter values. $end
+$dumpall
+$end
+#0
+$dumpvars
+b1000100010001 ,
+bx +
+b100010001000100 *
+b11001100110011 )
+b10001000100010 (
+b1000100010001 '
+bx &
+b100010001000100 %
+b11001100110011 $
+b10001000100010 #
+b1000100010001 "
+b1000100010001 !
+$end
+#10
+b0 &
+b0 +
+#25
+b10001000100010 !
+b10001000100010 ,
+b1 &
+b1 +
+#40
+b11001100110011 !
+b11001100110011 ,
+b10 &
+b10 +
+#55
+b100010001000100 !
+b100010001000100 ,
+b11 &
+b11 +
+#70
