@@ -1,5 +1,5 @@
-cd ./mux_2_to_1
+cd ./basic_blocks/mux_2_to_1
 iverilog -Wall -o mux_2_to_1_tb.vvp mux_2_to_1_tb.v mux_2_to_1.v
 vvp mux_2_to_1_tb.vvp
 gtkwave mux_2_to_1_tb.vcd
-cd ../
+cd ../../
