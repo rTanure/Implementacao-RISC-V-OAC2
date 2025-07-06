@@ -1,4 +1,5 @@
 `timescale 1ps / 1ps
+`include "../../params.vh"
 
 module alu_tb ();
   reg [31:0] op_a;
@@ -20,20 +21,20 @@ module alu_tb ();
     $dumpfile("alu_tb.vcd");
     $dumpvars(0, alu_tb);
 
-    op_a = 32'd50;
-    op_b = 32'd20;
-    alu_op = 4'b0000;
+    op_a = `DATA_WIDTH'd50;
+    op_b = `DATA_WIDTH'd20;
+    alu_op = `ALU_ADD;
 
     #10
     $display("50 + 20 = %d (70), zero: %d", result, zero);
     #5
 
-    alu_op = 4'b0001;
+    alu_op = `ALU_SUB;
     #10
     $display("50 - 20 = %d (30), zero: %d", result, zero);
 
     #5
-    alu_op = 4'b0010;
+    alu_op = `ALU_AND;
     #10
     $display("===== AND =====");
     $display("%b", op_a);
@@ -41,7 +42,7 @@ module alu_tb ();
     $display("%b", result);
 
     #5
-    alu_op = 4'b0011;
+    alu_op = `ALU_OR;
     #10
     $display("===== OR =====");
     $display("%b", op_a);
@@ -49,7 +50,7 @@ module alu_tb ();
     $display("%b", result);
 
     #5
-    alu_op = 4'b0100;
+    alu_op = `ALU_XOR;
     #10
     $display("===== XOR =====");
     $display("%b", op_a);
@@ -57,7 +58,7 @@ module alu_tb ();
     $display("%b", result);
     
     #5
-    alu_op = 4'b0101;
+    alu_op = `ALU_SLL;
     op_b = 32'd3;
     #10
     $display("===== sll =====");
@@ -65,14 +66,14 @@ module alu_tb ();
     $display("%b", result);
     
     #5
-    alu_op = 4'b0110;
+    alu_op = `ALU_SRL;
     op_b = 32'd3;
     #10
-    $display("===== sll =====");
+    $display("===== srl =====");
     $display("%b", op_a);
     $display("%b", result);
 
-    alu_op = 4'b0001;
+    alu_op = `ALU_SUB;
     op_b = 32'd50;
     op_a = 32'd50;
     #10
