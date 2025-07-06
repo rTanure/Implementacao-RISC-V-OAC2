@@ -1,0 +1,5 @@
+cd ./risc_v_blocks/control_unit
+iverilog -Wall -o control_unit_tb.vvp control_unit_tb.v control_unit.v
+vvp control_unit_tb.vvp
+gtkwave control_unit_tb.vcd
+cd ../../

@@ -24,4 +24,12 @@
 `define ALU_SLL   4'b0101
 `define ALU_SRL   4'b0110
 
+// Definições da unidade de controle
+
+// pag 126
+`define OPCODE_R_TYPE  7'b0110011
+`define OPCODE_I_TYPE  7'b0010011
+`define OPCODE_LOAD    7'b0000011
+`define OPCODE_STORE   7'b0100011
+`define OPCODE_BRANCH  7'b1100111
 
