@@ -1,13 +1,15 @@
+`include "../../params.vh"
+
 module instruction_memory (
-  input  [31:0] read_address,
-  output [31:0] instruction_data
+  input  [`ADDR_WIDTH - 1:0] read_address,
+  output [`DATA_WIDTH - 1:0] instruction_data
 );
-  // Crie uma memoria de instruções com 256 palavras de 32 bits
-  reg [31:0] memory [0:255];
+  // Cria um banco de registradores
+  reg [`DATA_WIDTH - 1:0] memory [0:`INST_MEM_DEPTH - 1];
 
   initial begin
     // Carrega o arquivo contendo o programa para a memoria de intruções
-    $readmemb("../../program.bin", memory);
+    $readmemb(`INST_MEM_FILE, memory);
   end
 
   // Atribui o valor da memória ao dado de instrução

@@ -1,9 +1,10 @@
 `timescale 1ps / 1ps
+`include "../../params.vh"
 
 module instruction_memory_tb;
 
-  reg [31:0] addr;
-  wire [31:0] instr;
+  reg [`ADDR_WIDTH:0] addr;
+  wire [`DATA_WIDTH:0] instr;
 
   instruction_memory uut (
     .read_address(addr),

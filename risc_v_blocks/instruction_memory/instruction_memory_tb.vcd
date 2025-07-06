@@ -1,5 +1,5 @@
 $date
-	Sat Jul 05 20:12:29 2025
+	Sat Jul 05 22:26:59 2025
 $end
 $version
 	Icarus Verilog
@@ -8,8 +8,8 @@ $timescale
 	1ps
 $end
 $scope module instruction_memory_tb $end
-$var wire 32 ! instr [31:0] $end
-$var reg 32 " addr [31:0] $end
+$var wire 33 ! instr [32:0] $end
+$var reg 33 " addr [32:0] $end
 $var integer 32 # i [31:0] $end
 $scope module uut $end
 $var wire 32 $ instruction_data [31:0] $end
@@ -31,46 +31,46 @@ $end
 #10
 b100000001000100010011 !
 b100000001000100010011 $
-b100 "
 b100 %
+b100 "
 b1 #
 #20
 b1000001000000110110011 !
 b1000001000000110110011 $
-b1000 "
 b1000 %
+b1000 "
 b10 #
 #30
 b1100010000000100010011 !
 b1100010000000100010011 $
-b1100 "
 b1100 %
+b1100 "
 b11 #
 #40
-bx !
+b0xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx !
 bx $
-b10000 "
 b10000 %
+b10000 "
 b100 #
 #50
-b10100 "
 b10100 %
+b10100 "
 b101 #
 #60
-b11000 "
 b11000 %
+b11000 "
 b110 #
 #70
-b11100 "
 b11100 %
+b11100 "
 b111 #
 #80
-b100000 "
 b100000 %
+b100000 "
 b1000 #
 #90
-b100100 "
 b100100 %
+b100100 "
 b1001 #
 #100
 b1010 #
