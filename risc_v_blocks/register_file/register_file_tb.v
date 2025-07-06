@@ -1,4 +1,5 @@
 `timescale 1ps/1ps
+`include "../../params.vh"
 
 module register_file_tb();
   reg clk = 0;
@@ -6,13 +7,14 @@ module register_file_tb();
 
   reg rst = 1;
   reg reg_write = 0;
-  reg [4:0] read_address_a = 0;
-  reg [4:0] read_address_b = 0;
-  reg [4:0] write_address = 0;
-  reg [31:0] write_data = 0;
+  reg [`REG_ADDR_WIDTH-1:0] read_address_a = 0;
+  reg [`REG_ADDR_WIDTH-1:0] read_address_b = 0;
+  reg [`REG_ADDR_WIDTH-1:0] write_address = 0;
 
-  wire [31:0] read_data_a;
-  wire [31:0] read_data_b;
+  reg [`DATA_WIDTH-1:0] write_data = 0;
+
+  wire [`DATA_WIDTH-1:0] read_data_a;
+  wire [`DATA_WIDTH-1:0] read_data_b;
 
   register_file uut (
     .clk(clk),

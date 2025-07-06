@@ -5,3 +5,7 @@
 // Definições da memoria de instruções
 `define INST_MEM_DEPTH 256
 `define INST_MEM_FILE "../../program.bin"
+
+// Definições do branco de registradores
+`define NUM_REGISTERS 32
+`define REG_ADDR_WIDTH 5 // log_2(NUM_REGISTERS)
