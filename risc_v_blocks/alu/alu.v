@@ -5,7 +5,7 @@ module alu(
   input [`DATA_WIDTH-1:0] op_b,
   input [`ALU_OP_WIDTH-1:0] alu_op,
 
-  output reg [`DATA_WIDTH:0] result,
+  output reg [`DATA_WIDTH-1:0] result,
   output reg zero
 );
   always @(*) begin
@@ -15,7 +15,7 @@ module alu(
       `ALU_AND: result = op_a & op_b;
       `ALU_OR: result = op_a | op_b;
       `ALU_XOR: result = op_a ^ op_b;
-      `ALU_SLL: result = op_a << op_b[4:0];
+      `ALU_SLL: result = op_a << op_b[4:0]; // o shift é de no máximo 2^5 = 32
       `ALU_SRL: result = op_a >> op_b[4:0];
       default: result = `ZERO;
     endcase
