@@ -33,3 +33,7 @@
 `define OPCODE_STORE   7'b0100011
 `define OPCODE_BRANCH  7'b1100111
 
+// Definição da memoria de dados
+`define DMEM_DEPTH   256 
+`define DATA_FILE    "../../data.bin"
+
