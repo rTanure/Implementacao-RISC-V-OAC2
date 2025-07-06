@@ -1,12 +1,14 @@
+`include "../../params.vh"
+
 module mux_4_to_1(
-  input [31:0] input_0,
-  input [31:0] input_1,
-  input [31:0] input_2,
-  input [31:0] input_3,
+  input [`DATA_WIDTH-1:0] input_0,
+  input [`DATA_WIDTH-1:0] input_1,
+  input [`DATA_WIDTH-1:0] input_2,
+  input [`DATA_WIDTH-1:0] input_3,
 
   input [1:0] sel,
 
-  output reg [31:0] out
+  output reg [`DATA_WIDTH-1:0] out
 );
   always @(*) begin
     case (sel)

@@ -2,11 +2,11 @@
 `include "../../params.vh"
 
 module alu_tb ();
-  reg [31:0] op_a;
-  reg [31:0] op_b;
-  reg [3:0] alu_op;
+  reg [`DATA_WIDTH:0] op_a;
+  reg [`DATA_WIDTH:0] op_b;
+  reg [`ALU_OP_WIDTH-1:0] alu_op;
 
-  wire [31:0] result;
+  wire [`DATA_WIDTH:0] result;
   wire zero;
 
   alu uut(
@@ -59,7 +59,7 @@ module alu_tb ();
     
     #5
     alu_op = `ALU_SLL;
-    op_b = 32'd3;
+    op_b = `DATA_WIDTH'd3;
     #10
     $display("===== sll =====");
     $display("%b", op_a);
@@ -67,15 +67,15 @@ module alu_tb ();
     
     #5
     alu_op = `ALU_SRL;
-    op_b = 32'd3;
+    op_b = `DATA_WIDTH'd3;
     #10
     $display("===== srl =====");
     $display("%b", op_a);
     $display("%b", result);
 
     alu_op = `ALU_SUB;
-    op_b = 32'd50;
-    op_a = 32'd50;
+    op_b = `DATA_WIDTH'd50;
+    op_a = `DATA_WIDTH'd50;
     #10
     $display("===== zero =====");
     $display("50 - 50 = %d , zero: %d", result, zero);

@@ -22,7 +22,7 @@ module register_file(
     if (rst) begin
       
       for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin
-        registers[i] <= `DATA_WIDTH'b0;
+        registers[i] <= `ZERO;
       end
     end else if (reg_write && write_address != `REG_ADDR_WIDTH'b0) begin
       registers[write_address] <= write_data;
@@ -30,8 +30,8 @@ module register_file(
   end
 
   always @(*) begin
-    read_data_a = (read_address_a == 5'b0) ? 32'b0 : registers[read_address_a];
-    read_data_b = (read_address_b == 5'b0) ? 32'b0 : registers[read_address_b];
+    read_data_a = (read_address_a == 5'b0) ? `ZERO : registers[read_address_a];
+    read_data_b = (read_address_b == 5'b0) ? `ZERO : registers[read_address_b];
   end
 
 endmodule

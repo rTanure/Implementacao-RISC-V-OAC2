@@ -1,14 +1,15 @@
 `timescale 1ps/1ps
+`include "../../params.vh"
 
 module mux_4_to_1_tb();
-  reg [31:0] data_0;
-  reg [31:0] data_1;
-  reg [31:0] data_2;
-  reg [31:0] data_3;
+  reg [`DATA_WIDTH-1:0] data_0;
+  reg [`DATA_WIDTH-1:0] data_1;
+  reg [`DATA_WIDTH-1:0] data_2;
+  reg [`DATA_WIDTH-1:0] data_3;
 
   reg [1:0] sel;
 
-  wire [31:0] out;
+  wire [`DATA_WIDTH-1:0] out;
 
   mux_4_to_1 uut (
     .input_0(data_0),
@@ -23,10 +24,10 @@ module mux_4_to_1_tb();
     $dumpfile("mux_4_to_1_tb.vcd");
     $dumpvars(0, mux_4_to_1_tb);
 
-    data_0 = 32'h1111;
-    data_1 = 32'h2222;
-    data_2 = 32'h3333;
-    data_3 = 32'h4444;
+    data_0 = `DATA_WIDTH'h1111;
+    data_1 = `DATA_WIDTH'h2222;
+    data_2 = `DATA_WIDTH'h3333;
+    data_3 = `DATA_WIDTH'h4444;
 
     #10
     sel = 2'b00;

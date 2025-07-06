@@ -38,39 +38,39 @@ module register_file_tb();
 
     // Escreve 123 no registrador 1
     #10
-    write_address = 5'd1;
-    write_data = 32'd123;
+    write_address = `REG_ADDR_WIDTH'd1;
+    write_data = `DATA_WIDTH'd123;
     reg_write = 1;
     #10
     reg_write = 0;
 
     // Lê o valor do registrador 1;
-    read_address_a = 5'd1;
+    read_address_a = `REG_ADDR_WIDTH'd1;
     #5;
     $display("Esperado: 123, Lido: %d", read_data_a);
 
     // Tenta escrever 99 no registrador 0
-    write_address = 5'd0;
-    write_data = 32'd99;
+    write_address = `REG_ADDR_WIDTH'd0;
+    write_data = `DATA_WIDTH'd99;
     reg_write = 1;
     #10
     reg_write = 0;
 
     #10
-    read_address_a = 5'd0;
+    read_address_a = `REG_ADDR_WIDTH'd0;
     #5
     $display("Esperado: 0, Lido: %d", read_data_a);
 
     // Escrever 736 no registrador 2
-    write_address = 5'd2;
-    write_data = 32'd736;
+    write_address = `REG_ADDR_WIDTH'd2;
+    write_data = `DATA_WIDTH'd736;
     reg_write = 1;
     #10;
     reg_write = 0;
 
     // Ler registradores 1 e 2 simultaneamente
-    read_address_a = 5'd1;
-    read_address_b = 5'd2;
+    read_address_a = `REG_ADDR_WIDTH'd1;
+    read_address_b = `REG_ADDR_WIDTH'd2;
     #5;
     $display("Lido A: %d (esperado 123), Lido B: %d (esperado 736)", read_data_a, read_data_b);
 
