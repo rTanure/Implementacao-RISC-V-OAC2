@@ -2,7 +2,7 @@
 `define DATA_WIDTH  32
 `define ADDR_WIDTH  32
 
-`define ZERO        32'b0;
+`define ZERO        32'b0
 
 // Definições da memoria de instruções
 `define INST_MEM_DEPTH 256
