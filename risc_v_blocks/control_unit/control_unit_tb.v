@@ -1,5 +1,5 @@
 `timescale 1ps/1ps
-`include "../../params.vh"
+`include "params.vh"
 
 module control_unit_tb ();
   reg [6:0] op_code;

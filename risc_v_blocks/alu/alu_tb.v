@@ -1,10 +1,10 @@
 `timescale 1ps / 1ps
-`include "../../params.vh"
+`include "params.vh"
 
 module alu_tb ();
   reg [`DATA_WIDTH-1:0] op_a;
   reg [`DATA_WIDTH-1:0] op_b;
-  reg [`ALU_OP_WIDTH-1:0] alu_op;
+  reg [3:0] alu_op;
 
   wire [`DATA_WIDTH-1:0] result;
   wire zero;

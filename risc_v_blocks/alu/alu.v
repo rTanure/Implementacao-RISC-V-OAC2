@@ -1,10 +1,9 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module alu(
   input [`DATA_WIDTH-1:0] op_a,
   input [`DATA_WIDTH-1:0] op_b,
-  input [`ALU_OP_WIDTH-1:0] alu_op,
-
+  input [3:0] alu_op,
   output reg [`DATA_WIDTH-1:0] result,
   output reg zero
 );

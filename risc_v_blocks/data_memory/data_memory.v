@@ -1,4 +1,4 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module data_memory (
   input clk,

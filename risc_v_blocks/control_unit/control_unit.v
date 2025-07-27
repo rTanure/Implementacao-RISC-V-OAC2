@@ -1,4 +1,4 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module control_unit( // pag. 282.e5
   input [6:0] op_code,
