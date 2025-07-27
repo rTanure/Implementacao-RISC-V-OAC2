@@ -1,5 +1,3 @@
-cd ./risc_v_blocks/instruction_memory
-iverilog -Wall -o instruction_memory_tb.vvp instruction_memory_tb.v instruction_memory.v
+iverilog -Wall -o instruction_memory_tb.vvp ./risc_v_blocks/instruction_memory/*.v
 vvp instruction_memory_tb.vvp
-gtkwave instruction_memory_tb.vcd
-cd ../../
+gtkwave instruction_memory_tb.vvp
