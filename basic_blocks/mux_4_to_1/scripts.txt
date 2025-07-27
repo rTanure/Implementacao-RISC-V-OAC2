@@ -1,5 +1,0 @@
-cd ./basic_blocks/mux_4_to_1
-iverilog -Wall -o mux_4_to_1_tb.vvp mux_4_to_1_tb.v mux_4_to_1.v
-vvp mux_4_to_1_tb.vvp
-gtkwave mux_4_to_1_tb.vcd
-cd ../../
