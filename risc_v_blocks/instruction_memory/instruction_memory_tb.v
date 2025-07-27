@@ -1,5 +1,5 @@
 `timescale 1ps / 1ps
-`include "../../params.vh"
+`include "params.vh"
 
 module instruction_memory_tb;
 

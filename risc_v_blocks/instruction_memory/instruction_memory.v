@@ -1,4 +1,4 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module instruction_memory (
   input  [`ADDR_WIDTH - 1:0] read_address,

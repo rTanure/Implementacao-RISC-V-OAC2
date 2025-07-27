@@ -1,4 +1,4 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module register_file(
   input clk,
@@ -16,11 +16,10 @@ module register_file(
 );
   reg [`DATA_WIDTH-1:0] registers [`NUM_REGISTERS-1:0];
 
-  integer i = 0;
+  integer i;
 
   always @(posedge clk or posedge rst) begin
     if (rst) begin
-      
       for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin
         registers[i] <= `ZERO;
       end
