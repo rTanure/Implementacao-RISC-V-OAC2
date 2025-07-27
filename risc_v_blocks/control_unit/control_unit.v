@@ -50,6 +50,15 @@ module control_unit( // pag. 282.e5
         Branch = 1;
         ALU_op = 2'b01;
       end
+      7'b0010011: begin
+        ALUSrcA = 1;
+        MemToReg = 0;
+        RegWrite = 1;
+        MemRead = 0;
+        MemWrite = 0;
+        Branch = 0;
+        ALU_op = 2'b00;
+      end
     endcase
   end
 
