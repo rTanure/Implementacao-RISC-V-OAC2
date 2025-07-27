@@ -1,4 +1,4 @@
-`include "../../params.vh"
+`include "params.vh"
 
 module mux_4_to_1(
   input [`DATA_WIDTH-1:0] input_0,

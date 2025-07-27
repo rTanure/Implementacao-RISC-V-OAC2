@@ -1,5 +1,5 @@
 `timescale 1ps/1ps
-`include "../../params.vh"
+`include "params.vh"
 
 module mux_4_to_1_tb();
   reg [`DATA_WIDTH-1:0] data_0;
