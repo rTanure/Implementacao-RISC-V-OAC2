@@ -15,8 +15,9 @@ module cpu_sem_pipeline(
   input clk,
   input rst
 );
-
-  // IF
+  // =========================================
+  // IF - Instruction Fetch
+  // =========================================
   reg [31:0] pc;
   wire [31:0] instruction;
 
@@ -25,6 +26,7 @@ module cpu_sem_pipeline(
     .instruction_data(instruction)
   );
 
+  // Atualiza o PC
   always @(posedge clk, rst) begin
     if (rst)
       pc <= 0;
@@ -32,6 +34,7 @@ module cpu_sem_pipeline(
       pc <= pc + 4;
   end
 
+  // Decodifica a instrução
   wire [6:0] op_code = {instruction[6:0]};
   wire [4:0] rd = {instruction[11:7]};
   wire [2:0] funct3 = {instruction[14:12]};
@@ -39,23 +42,26 @@ module cpu_sem_pipeline(
   wire [4:0] rs2 = {instruction[24:20]};
   wire [6:0] funct7 = {instruction[31:25]};
 
-  // ~IF
-
-  // always @(posedge clk) begin
-  //   $display("====== IF ======");
-  //   $display("PC          : %40d", pc);
-  //   $display("instruction : %40b", instruction);
-  //   $display("");
-  //   $display("op_code     : %40b", op_code);
-  //   $display("rd          : %40b", rd);
-  //   $display("funct3      : %40b", funct3);
-  //   $display("rs1         : %40b", rs1);
-  //   $display("rs2         : %40b", rs2);
-  //   $display("funct7      : %40b", funct7);
-  // end
-
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== IF ======");
+    $display("PC          : %40d", pc);
+    $display("instruction : %40b", instruction);
+    $display("");
+    $display("op_code     : %40b", op_code);
+    $display("rd          : %40b", rd);
+    $display("funct3      : %40b", funct3);
+    $display("rs1         : %40b", rs1);
+    $display("rs2         : %40b", rs2);
+    $display("funct7      : %40b", funct7);
+  end
+  `endif 
   
-  // ID
+  // ==========================================
+  // ID - Instruction Decode
+  // ==========================================
+  
+  // Unidade de controle
   wire branch;
   wire memRead;
   wire memToReg;
@@ -75,35 +81,25 @@ module cpu_sem_pipeline(
     .RegWrite(regWrite)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== Control unit ======");
-  //   $display("op_code     : %40b", op_code);
-  //   $display("Branch      : %40b", branch);
-  //   $display("MemRead     : %40b", memRead);
-  //   $display("MemToReg    : %40b", memToReg);
-  //   $display("ALU_op      : %40b", alu_op);
-  //   $display("MemWrite    : %40b", memWrite);
-  //   $display("ALUSrcA     : %40b", aluSrcA);
-  //   $display("RegWrite    : %40b", regWrite);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("Instruction: %b", instruction);
+    $display("Opcode: %b", op_code);
+    $display("Branch: %b", branch);
+    $display("MemRead: %b", memRead);
+    $display("MemToReg: %b", memToReg);
+    $display("ALU_op: %b", alu_op);
+    $display("MemWrite: %b", memWrite);
+    $display("ALUSrcA: %b", aluSrcA);
+    $display("RegWrite: %b", regWrite);
+    $display("");
+  end
+  `endif
 
-  // always @(posedge clk) begin
-  //   $display("Instruction: %b", instruction);
-  //   $display("Opcode: %b", op_code);
-  //   $display("Branch: %b", branch);
-  //   $display("MemRead: %b", memRead);
-  //   $display("MemToReg: %b", memToReg);
-  //   $display("ALU_op: %b", alu_op);
-  //   $display("MemWrite: %b", memWrite);
-  //   $display("ALUSrcA: %b", aluSrcA);
-  //   $display("RegWrite: %b", regWrite);
-  //   $display("");
-  // end
-
+  // Banco de registradores
   wire [31:0] write_data;
   wire [31:0] read_data_a;
   wire [31:0] read_data_b;
-
 
   register_file reg_file (
     .clk(clk),
@@ -120,17 +116,20 @@ module cpu_sem_pipeline(
     .read_data_b(read_data_b)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== REGISTER ======");
-  //   $display("reg_write      : %40b", regWrite);
-  //   $display("read_address_a : %40b", rs1);
-  //   $display("read_address_b : %40b", rs2);
-  //   $display("write_address  : %40b", rd);
-  //   $display("write_data     : %40b", write_data);
-  //   $display("read_data_a    : %40b", read_data_a);
-  //   $display("read_data_b    : %40b", read_data_b);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== REGISTER ======");
+    $display("reg_write      : %40b", regWrite);
+    $display("read_address_a : %40b", rs1);
+    $display("read_address_b : %40b", rs2);
+    $display("write_address  : %40b", rd);
+    $display("write_data     : %40b", write_data);
+    $display("read_data_a    : %40b", read_data_a);
+    $display("read_data_b    : %40b", read_data_b);
+  end
+  `endif
 
+  // Gera o imediato
   wire [31:0] immediate;
 
   imm_gen imm_gen(
@@ -138,11 +137,14 @@ module cpu_sem_pipeline(
     .immediate(immediate)
   );
   
+  `ifdef DEBUG
   always @(posedge clk) begin
     $display("====== IMM GEN ======");
     $display("immediate      : %40b", immediate);
   end
+  `endif
 
+  // Entrada B será o dado lido do banco de registradores ou o imediato
   wire [31:0] alu_reg_b;
 
   mux_2_to_1 mux_reg_alu (
@@ -152,32 +154,38 @@ module cpu_sem_pipeline(
     .out(alu_reg_b)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== MUX ALU REG B ======");
-  //   $display("input_0       : %40b", read_data_b);
-  //   $display("input_1       : %40b", immediate);
-  //   $display("aluSrcA       : %40b", aluSrcA);
-  //   $display("alu_reg_b     : %40b", alu_reg_b);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== MUX ALU REG B ======");
+    $display("input_0       : %40b", read_data_b);
+    $display("input_1       : %40b", immediate);
+    $display("aluSrcA       : %40b", aluSrcA);
+    $display("alu_reg_b     : %40b", alu_reg_b);
+  end
+  `endif
 
-  // ~ID
-
-  // EX
+  // ===========================================
+  // EX - Execute
+  // ===========================================
   wire [3:0] alu_operation;
 
+  // Controlador da ALU
   alu_control alu_crtl (
     .ALUOp(alu_op),
     .instruction(instruction),
     .ALUControl(alu_operation)
   );
+  
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== ALU CONTROL ======");
+    $display("ALUOp         : %40b", alu_op);
+    $display("instruction   : %40b", instruction);
+    $display("ALUControl    : %40b", alu_operation);
+  end
+  `endif
 
-  // always @(posedge clk) begin
-  //   $display("====== ALU CONTROL ======");
-  //   $display("ALUOp         : %40b", alu_op);
-  //   $display("instruction   : %40b", instruction);
-  //   $display("ALUControl    : %40b", alu_operation);
-  // end
-
+  // ALU
   wire [31:0] alu_result;
   wire alu_zero;
 
@@ -189,19 +197,20 @@ module cpu_sem_pipeline(
     .zero(alu_zero)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== ALU ======");
-  //   $display("op_a          : %40b", read_data_a);
-  //   $display("op_b          : %40b", alu_reg_b);
-  //   $display("alu_op        : %40b", alu_operation);
-  //   $display("result        : %40b", alu_result);
-  //   $display("zero          : %40b", alu_zero);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== ALU ======");
+    $display("op_a          : %40b", read_data_a);
+    $display("op_b          : %40b", alu_reg_b);
+    $display("alu_op        : %40b", alu_operation);
+    $display("result        : %40b", alu_result);
+    $display("zero          : %40b", alu_zero);
+  end
+  `endif
 
-  // ~EX
-
-  // MEM
-
+  // ============================================
+  // MEM - Memory Access
+  // ============================================
   wire [31:0] read_data;
 
   data_memory data_memory(
@@ -213,15 +222,18 @@ module cpu_sem_pipeline(
     .read_data(read_data)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== DATA MEMORY ======");
-  //   $display("MemWrite      : %40b", memWrite);
-  //   $display("MemRead       : %40b", memRead);
-  //   $display("address       : %40b", alu_result);
-  //   $display("write_data    : %40b", read_data_b);
-  //   $display("read_data     : %40b", read_data);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== DATA MEMORY ======");
+    $display("MemWrite      : %40b", memWrite);
+    $display("MemRead       : %40b", memRead);
+    $display("address       : %40b", alu_result);
+    $display("write_data    : %40b", read_data_b);
+    $display("read_data     : %40b", read_data);
+  end
+  `endif
 
+  // Dado salvo será o resultado da ALU ou o dado lido da memória
   mux_2_to_1 mux_data_reg (
     .input_0(alu_result),
     .input_1(read_data),
@@ -229,13 +241,15 @@ module cpu_sem_pipeline(
     .out(write_data)
   );
 
-  // always @(posedge clk) begin
-  //   $display("====== MUX DATA REG ======");
-  //   $display("input_0       : %40b", alu_result);
-  //   $display("input_1       : %40b", read_data);
-  //   $display("memToReg      : %40b", memToReg);
-  //   $display("write_data    : %40b", write_data);
-  // end
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== MUX DATA REG ======");
+    $display("input_0       : %40b", alu_result);
+    $display("input_1       : %40b", read_data);
+    $display("memToReg      : %40b", memToReg);
+    $display("write_data    : %40b", write_data);
+  end
+  `endif
 
   // ~MEM
 

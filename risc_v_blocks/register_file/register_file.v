@@ -31,7 +31,7 @@ module register_file(
   end
 
   always @(posedge clk or posedge rst) begin
-    $display("--- Ciclo %0t rst: %b ---", $time, rst);
+    $display("--- Ciclo %0d rst: %b ---", $time, rst);
     for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin  
       $display("  R[%2d] = %10d", i, registers[i]);
     end
