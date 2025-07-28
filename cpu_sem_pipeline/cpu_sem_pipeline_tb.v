@@ -17,7 +17,7 @@ module cpu_sem_pipeline_tb;
     #0 rst = 1;
     #10 rst = 0;
 
-    #40 $finish;
+    #100 $finish;
   end
 
 endmodule
