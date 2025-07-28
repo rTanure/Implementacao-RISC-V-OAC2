@@ -211,14 +211,16 @@ module cpu_sem_pipeline(
   // ============================================
   // MEM - Memory Access
   // ============================================
-  wire [31:0] read_data;
+  wire [7:0] read_data;
+  wire [31:0] extended_read_data;
+  assign extended_read_data = {{25{read_data[7]}}, {read_data[6:0]}};
 
   data_memory data_memory(
     .clk(clk),
     .MemWrite(memWrite),
     .MemRead(memRead),
     .address(alu_result),
-    .write_data(read_data_b),
+    .write_data(read_data_b[7:0]),
     .read_data(read_data)
   );
 
@@ -236,7 +238,7 @@ module cpu_sem_pipeline(
   // Dado salvo será o resultado da ALU ou o dado lido da memória
   mux_2_to_1 mux_data_reg (
     .input_0(alu_result),
-    .input_1(read_data),
+    .input_1(extended_read_data),
     .sel(memToReg),
     .out(write_data)
   );
