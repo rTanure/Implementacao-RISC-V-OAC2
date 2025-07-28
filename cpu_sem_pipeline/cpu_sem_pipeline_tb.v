@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module cpu_sem_pipeline_tb;
-  reg clk = 0;
+  reg clk = 1;
   always #5 clk = ~clk;
 
   reg rst = 1;
@@ -17,7 +17,7 @@ module cpu_sem_pipeline_tb;
     #0 rst = 1;
     #10 rst = 0;
 
-    #10 $finish;
+    #40 $finish;
   end
 
 endmodule
