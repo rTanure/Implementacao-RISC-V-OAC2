@@ -20,18 +20,39 @@ module cpu_sem_pipeline(
   // =========================================
   reg [31:0] pc;
   wire [31:0] instruction;
+  wire [31:0] pc_next;
+  wire [31:0] pc_branch;
+  wire pc_src;
 
   instruction_memory i_mem (
     .read_address(pc),
     .instruction_data(instruction)
   );
 
+  mux_2_to_1 mux_pc (
+    .input_0(pc + 4),
+    .input_1(pc_branch),
+    .sel(pc_src),
+    .out(pc_next)
+  );
+
+  `ifdef DEBUG
+  always @(posedge clk) begin
+    $display("====== IF pc ======");
+    $display("PC          : %40d", pc);
+    $display("instruction : %40b", instruction);
+    $display("pc_next     : %40d", pc_next);
+    $display("pc_branch   : %40d", pc_branch);
+    $display("pc_src      : %40b", pc_src);
+  end
+  `endif
+
   // Atualiza o PC
   always @(posedge clk, rst) begin
     if (rst)
       pc <= 0;
     else
-      pc <= pc + 4;
+      pc <= pc_next;
   end
 
   // Decodifica a instrução
@@ -197,6 +218,8 @@ module cpu_sem_pipeline(
     .zero(alu_zero)
   );
 
+  assign pc_branch = pc + immediate;
+
   `ifdef DEBUG
   always @(posedge clk) begin
     $display("====== ALU ======");
@@ -223,6 +246,8 @@ module cpu_sem_pipeline(
     .write_data(read_data_b[7:0]),
     .read_data(read_data)
   );
+
+  assign pc_src = alu_zero & branch;
 
   `ifdef DEBUG
   always @(posedge clk) begin

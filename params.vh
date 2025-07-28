@@ -31,7 +31,7 @@
 `define OPCODE_I_TYPE  7'b0010011
 `define OPCODE_LOAD    7'b0000011
 `define OPCODE_STORE   7'b0100011
-`define OPCODE_BRANCH  7'b1100111
+`define OPCODE_BRANCH  7'b1100011
 
 // Definição da memoria de dados
 `define DMEM_DEPTH   256 
