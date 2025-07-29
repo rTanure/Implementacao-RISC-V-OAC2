@@ -234,7 +234,7 @@ module cpu_com_pipeline(
     .sum_pc_in(pc_ex),
     .alu_result_in(alu_result),
     .alu_zero_in(alu_zero),
-    .read_data_b_in(alu_reg_b),
+    .read_data_b_in(read_data_b_ex),
 
     .instruction_in(instruction_ex),
 
@@ -358,6 +358,7 @@ module cpu_com_pipeline(
       $display("ALU Control     : %04b", alu_operation);
       $display("Operands:");
       $display("  op_a          : %032b", read_data_a_ex);
+      $display("  alu src       : %032b", aluSrcA_ex);
       $display("  op_b (MUX)    : %032b", alu_reg_b);
       $display("ALU Result      : %032b", alu_result);
       // $display("ALU Zero        : %1b", alu_zero);
