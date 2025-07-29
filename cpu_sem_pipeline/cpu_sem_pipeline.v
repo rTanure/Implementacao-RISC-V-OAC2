@@ -36,17 +36,6 @@ module cpu_sem_pipeline(
     .out(pc_next)
   );
 
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== IF pc ======");
-    $display("PC          : %40d", pc);
-    $display("instruction : %40b", instruction);
-    $display("pc_next     : %40d", pc_next);
-    $display("pc_branch   : %40d", pc_branch);
-    $display("pc_src      : %40b", pc_src);
-  end
-  `endif
-
   // Atualiza o PC
   always @(posedge clk, rst) begin
     if (rst)
@@ -62,21 +51,6 @@ module cpu_sem_pipeline(
   wire [4:0] rs1 = {instruction[19:15]};
   wire [4:0] rs2 = {instruction[24:20]};
   wire [6:0] funct7 = {instruction[31:25]};
-
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== IF ======");
-    $display("PC          : %40d", pc);
-    $display("instruction : %40b", instruction);
-    $display("");
-    $display("op_code     : %40b", op_code);
-    $display("rd          : %40b", rd);
-    $display("funct3      : %40b", funct3);
-    $display("rs1         : %40b", rs1);
-    $display("rs2         : %40b", rs2);
-    $display("funct7      : %40b", funct7);
-  end
-  `endif 
   
   // ==========================================
   // ID - Instruction Decode
@@ -102,21 +76,6 @@ module cpu_sem_pipeline(
     .RegWrite(regWrite)
   );
 
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("Instruction: %b", instruction);
-    $display("Opcode: %b", op_code);
-    $display("Branch: %b", branch);
-    $display("MemRead: %b", memRead);
-    $display("MemToReg: %b", memToReg);
-    $display("ALU_op: %b", alu_op);
-    $display("MemWrite: %b", memWrite);
-    $display("ALUSrcA: %b", aluSrcA);
-    $display("RegWrite: %b", regWrite);
-    $display("");
-  end
-  `endif
-
   // Banco de registradores
   wire [31:0] write_data;
   wire [31:0] read_data_a;
@@ -137,19 +96,6 @@ module cpu_sem_pipeline(
     .read_data_b(read_data_b)
   );
 
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== REGISTER ======");
-    $display("reg_write      : %40b", regWrite);
-    $display("read_address_a : %40b", rs1);
-    $display("read_address_b : %40b", rs2);
-    $display("write_address  : %40b", rd);
-    $display("write_data     : %40b", write_data);
-    $display("read_data_a    : %40b", read_data_a);
-    $display("read_data_b    : %40b", read_data_b);
-  end
-  `endif
-
   // Gera o imediato
   wire [31:0] immediate;
 
@@ -157,13 +103,6 @@ module cpu_sem_pipeline(
     .instruction(instruction),
     .immediate(immediate)
   );
-  
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== IMM GEN ======");
-    $display("immediate      : %40b", immediate);
-  end
-  `endif
 
   // Entrada B será o dado lido do banco de registradores ou o imediato
   wire [31:0] alu_reg_b;
@@ -174,16 +113,6 @@ module cpu_sem_pipeline(
     .sel(aluSrcA),
     .out(alu_reg_b)
   );
-
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== MUX ALU REG B ======");
-    $display("input_0       : %40b", read_data_b);
-    $display("input_1       : %40b", immediate);
-    $display("aluSrcA       : %40b", aluSrcA);
-    $display("alu_reg_b     : %40b", alu_reg_b);
-  end
-  `endif
 
   // ===========================================
   // EX - Execute
@@ -196,15 +125,6 @@ module cpu_sem_pipeline(
     .instruction(instruction),
     .ALUControl(alu_operation)
   );
-  
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== ALU CONTROL ======");
-    $display("ALUOp         : %40b", alu_op);
-    $display("instruction   : %40b", instruction);
-    $display("ALUControl    : %40b", alu_operation);
-  end
-  `endif
 
   // ALU
   wire [31:0] alu_result;
@@ -219,17 +139,6 @@ module cpu_sem_pipeline(
   );
 
   assign pc_branch = pc + immediate;
-
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== ALU ======");
-    $display("op_a          : %40b", read_data_a);
-    $display("op_b          : %40b", alu_reg_b);
-    $display("alu_op        : %40b", alu_operation);
-    $display("result        : %40b", alu_result);
-    $display("zero          : %40b", alu_zero);
-  end
-  `endif
 
   // ============================================
   // MEM - Memory Access
@@ -249,17 +158,6 @@ module cpu_sem_pipeline(
 
   assign pc_src = alu_zero & branch;
 
-  `ifdef DEBUG
-  always @(posedge clk) begin
-    $display("====== DATA MEMORY ======");
-    $display("MemWrite      : %40b", memWrite);
-    $display("MemRead       : %40b", memRead);
-    $display("address       : %40b", alu_result);
-    $display("write_data    : %40b", read_data_b);
-    $display("read_data     : %40b", read_data);
-  end
-  `endif
-
   // Dado salvo será o resultado da ALU ou o dado lido da memória
   mux_2_to_1 mux_data_reg (
     .input_0(alu_result),
@@ -270,11 +168,85 @@ module cpu_sem_pipeline(
 
   `ifdef DEBUG
   always @(posedge clk) begin
+    $display("\n=================== DEBUG ===================");
+
+    // IF
+    $display("====== IF ======");
+    $display("PC              : %40d", pc);
+    $display("Instruction     : %40b", instruction);
+    $display("PC Next         : %40d", pc_next);
+    $display("PC Branch       : %40d", pc_branch);
+    $display("PC Src          : %40b", pc_src);
+
+    // Instruction Decode
+    $display("Opcode          : %40b", op_code);
+    $display("rd              : %40b", rd);
+    $display("funct3          : %40b", funct3);
+    $display("rs1             : %40b", rs1);
+    $display("rs2             : %40b", rs2);
+    $display("funct7          : %40b", funct7);
+
+    // Control Unit
+    $display("====== CONTROL UNIT ======");
+    $display("Branch          : %40b", branch);
+    $display("MemRead         : %40b", memRead);
+    $display("MemToReg        : %40b", memToReg);
+    $display("ALU_op          : %40b", alu_op);
+    $display("MemWrite        : %40b", memWrite);
+    $display("ALUSrcA         : %40b", aluSrcA);
+    $display("RegWrite        : %40b", regWrite);
+
+    // Register File
+    $display("====== REGISTER FILE ======");
+    $display("reg_write       : %40b", regWrite);
+    $display("read_address_a  : %40b", rs1);
+    $display("read_address_b  : %40b", rs2);
+    $display("write_address   : %40b", rd);
+    $display("write_data      : %40b", write_data);
+    $display("read_data_a     : %40b", read_data_a);
+    $display("read_data_b     : %40b", read_data_b);
+
+    // Immediate Generator
+    $display("====== IMM GEN ======");
+    $display("immediate       : %40b", immediate);
+
+    // MUX ALU REG B
+    $display("====== MUX ALU REG B ======");
+    $display("input_0 (reg_b) : %40b", read_data_b);
+    $display("input_1 (imm)   : %40b", immediate);
+    $display("aluSrcA         : %40b", aluSrcA);
+    $display("alu_reg_b       : %40b", alu_reg_b);
+
+    // ALU Control
+    $display("====== ALU CONTROL ======");
+    $display("ALUOp           : %40b", alu_op);
+    $display("instruction     : %40b", instruction);
+    $display("ALUControl      : %40b", alu_operation);
+
+    // ALU
+    $display("====== ALU ======");
+    $display("op_a            : %40b", read_data_a);
+    $display("op_b            : %40b", alu_reg_b);
+    $display("alu_op          : %40b", alu_operation);
+    $display("result          : %40b", alu_result);
+    $display("zero            : %40b", alu_zero);
+
+    // Data Memory
+    $display("====== DATA MEMORY ======");
+    $display("MemWrite        : %40b", memWrite);
+    $display("MemRead         : %40b", memRead);
+    $display("address         : %40b", alu_result);
+    $display("write_data      : %40b", read_data_b);
+    $display("read_data       : %40b", read_data);
+
+    // MUX DATA REG
     $display("====== MUX DATA REG ======");
-    $display("input_0       : %40b", alu_result);
-    $display("input_1       : %40b", read_data);
-    $display("memToReg      : %40b", memToReg);
-    $display("write_data    : %40b", write_data);
+    $display("input_0 (alu)   : %40b", alu_result);
+    $display("input_1 (mem)   : %40b", read_data);
+    $display("memToReg        : %40b", memToReg);
+    $display("write_data      : %40b", write_data);
+
+    $display("============================================\n");
   end
   `endif
 
