@@ -20,7 +20,7 @@ module cpu_com_pipeline(
   input clk,
   input rst
 );
-  wire flush;
+  wire flush = pc_src;
 
   // =========================================
   // IF - Instruction Fetch
@@ -38,7 +38,7 @@ module cpu_com_pipeline(
 
   mux_2_to_1 mux_pc (
     .input_0(pc + 4),
-    .input_1(pc_branch),
+    .input_1(sum_pc_mem),
     .sel(pc_src),
     .out(pc_next)
   );
@@ -122,7 +122,7 @@ module cpu_com_pipeline(
 
   wire [31:0] pc_ex;
   wire [31:0] instruction_ex;
-  wire [31:0] branch_ex;
+  wire branch_ex;
   wire memRead_ex;
   wire memToReg_ex;
   wire [1:0] alu_op_ex;
@@ -217,13 +217,13 @@ module cpu_com_pipeline(
   wire reg_write_mem;
   wire [31:0] sum_pc_mem;
   wire [31:0] alu_result_mem;
-  wire [31:0] alu_zero_mem;
+  wire alu_zero_mem;
   wire [31:0] read_data_b_mem;
   wire [31:0] instruction_mem;
 
   ex_mem_reg ex_mem (
     .clk(clk),
-    .rst(flush),
+    .rst(0),
 
     .branch_in(branch_ex),
     .mem_read_in(memRead_ex),
@@ -231,7 +231,7 @@ module cpu_com_pipeline(
     .mem_write_in(memWrite_ex),
     .reg_write_in(regWrite_ex),
 
-    .sum_pc_in(pc_ex),
+    .sum_pc_in(pc_branch),
     .alu_result_in(alu_result),
     .alu_zero_in(alu_zero),
     .read_data_b_in(read_data_b_ex),
@@ -276,12 +276,12 @@ module cpu_com_pipeline(
 
   mem_wb_reg mem_wb (
     .clk(clk),
-    .rst(flush),
+    .rst(0),
 
     .mem_to_reg_in(mem_to_reg_mem),
     .reg_write_in(reg_write_mem),
 
-    .read_data_in(read_data),
+    .read_data_in(extended_read_data),
     .alu_result_in(alu_result_mem),
     .instruction_in(instruction_mem),
 
@@ -315,45 +315,21 @@ module cpu_com_pipeline(
       // ==========================
       $display("====== IF : %h", instruction);
       $display("PC              : %10d", pc);
-      // $display("PC Branch       : %10d", pc_branch);
-      // $display("PC Src          : %1b", pc_src);
-      // $display("PC Next         : %10d", pc_next);
 
       // ==========================
       // ID - Instruction Decode
       // ==========================
-
       $display("====== ID : %h", instruction_id);
       $display("  RegWrite      : %1b", reg_write_wb);
       $display("  rs a          : %1d", rs1_id);
       $display("  rs b          : %1d", rs2_id);
-
       $display("  read data a   : %1d", read_data_a);
       $display("  read data b   : %1d", read_data_b);
       $display("  immediate     : %1d", immediate);
-      // $display("Opcode          : %07b", op_code_id);
-      // $display("rd              : %05b", rd_id);
-      // $display("rs1             : %05b", rs1_id);
-      // $display("rs2             : %05b", rs2_id);
-
-      // $display("Immediate       : %032b", immediate);
-
-      // $display("Control Signals:");
-      // $display("  Branch        : %1b", branch);
-      // $display("  MemRead       : %1b", memRead);
-      // $display("  MemToReg      : %1b", memToReg);
-      // $display("  ALUOp         : %02b", alu_op);
-      // $display("  MemWrite      : %1b", memWrite);
-      // $display("  ALUSrcA       : %1b", aluSrcA);
-
-      // $display("Register File:");
-      // $display("  rs1_data      : %032b", read_data_a);
-      // $display("  rs2_data      : %032b", read_data_b);
 
       // ==========================
       // EX - Execute
       // ==========================
-
       $display("====== EX : %h", instruction_ex);
       $display("ALU Control     : %04b", alu_operation);
       $display("Operands:");
@@ -361,13 +337,10 @@ module cpu_com_pipeline(
       $display("  alu src       : %032b", aluSrcA_ex);
       $display("  op_b (MUX)    : %032b", alu_reg_b);
       $display("ALU Result      : %032b", alu_result);
-      // $display("ALU Zero        : %1b", alu_zero);
-      // $display("Branch Target   : %032b", pc_branch);
 
       // ==========================
       // MEM - Memory Access
       // ==========================
-
       $display("====== ME : %h", instruction_mem);
       $display("MemRead         : %1b", mem_read_mem);
       $display("Address         : %032b", alu_result_mem);
@@ -375,7 +348,8 @@ module cpu_com_pipeline(
       $display("Write Data      : %032b", read_data_b_mem);
       $display("Read Data (raw) : %08b", read_data);
       $display("Read Data (ext) : %032b", extended_read_data);
-      // $display("RegWrite        : %1b", reg_write_mem);
+      $display("Branch         :  %1b", branch_mem);
+      $display("PC Next         : %d", sum_pc_mem);
 
       // ==========================
       // WB - Write Back

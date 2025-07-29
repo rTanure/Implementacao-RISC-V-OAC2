@@ -39,8 +39,15 @@ module register_file(
   end
 
   always @(*) begin
-    read_data_a = (read_address_a == 5'b0) ? `ZERO : registers[read_address_a];
-    read_data_b = (read_address_b == 5'b0) ? `ZERO : registers[read_address_b];
-  end
+  if (reg_write && (write_address == read_address_a) && (write_address != 0))
+    read_data_a = write_data;
+  else
+    read_data_a = (read_address_a == 0) ? `ZERO : registers[read_address_a];
+  
+  if (reg_write && (write_address == read_address_b) && (write_address != 0))
+    read_data_b = write_data;
+  else
+    read_data_b = (read_address_b == 0) ? `ZERO : registers[read_address_b];
+end
 
 endmodule
