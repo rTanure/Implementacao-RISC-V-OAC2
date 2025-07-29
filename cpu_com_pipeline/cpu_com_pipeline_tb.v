@@ -17,7 +17,7 @@ module cpu_com_pipeline_tb;
     #0 rst = 1;
     #10 rst = 0;
 
-    #150 $finish;
+    #500 $finish;
   end
 
 endmodule
