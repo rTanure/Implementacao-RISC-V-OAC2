@@ -204,7 +204,7 @@ module cpu_com_pipeline(
     .zero(alu_zero)
   );
 
-  assign pc_branch = pc_ex + immediate_ex;
+  assign pc_branch = pc_ex + (immediate_ex << 1);
 
   // ============================================
   // MEM - Memory Access
