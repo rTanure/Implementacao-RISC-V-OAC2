@@ -10,7 +10,7 @@ module data_memory (
 
   output [7:0] read_data
 );
-  reg [7:0] memory[255:0];
+  reg [7:0] memory[31:0];
 
   assign read_data = memory[address];
 
@@ -19,4 +19,15 @@ module data_memory (
       memory[address] <= write_data;
     end
   end
+
+  `ifdef DATA
+    integer i;
+    always @(posedge clk) begin
+      $display("--- MEMORIA DE DADOS ---");
+      for (i = 0; i < 32; i = i + 1) begin
+        $display("  M[%2d] = %10d %b", i, memory[i], memory[i]);
+      end
+      $display("");
+    end
+  `endif
 endmodule

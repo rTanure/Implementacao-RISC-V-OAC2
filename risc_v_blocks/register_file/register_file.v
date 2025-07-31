@@ -16,11 +16,10 @@ module register_file(
 );
   reg [`DATA_WIDTH-1:0] registers [`NUM_REGISTERS-1:0];
 
-  integer i;
+  
+    integer i;
 
   always @(posedge clk or posedge rst) begin
-    
-
     if (rst) begin
       for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin
         registers[i] <= `ZERO;
@@ -30,13 +29,16 @@ module register_file(
     end
   end
 
-  always @(posedge clk or posedge rst) begin
-    $display("--- Ciclo %0d rst: %b ---", $time, rst);
-    for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin  
-      $display("  R[%2d] = %10d %b", i, registers[i], registers[i]);
+
+  `ifdef REG
+    always @(posedge clk or posedge rst) begin
+      $display("--- REGISTRADORES ---");
+      for (i = 0; i < `NUM_REGISTERS; i = i + 1) begin  
+        $display("  R[%2d] = %10d %b", i, registers[i], registers[i]);
+      end
+      $display("");
     end
-    $display("");
-  end
+  `endif
 
   always @(*) begin
   if (reg_write && (write_address == read_address_a) && (write_address != 0))

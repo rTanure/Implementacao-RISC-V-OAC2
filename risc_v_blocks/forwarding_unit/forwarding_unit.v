@@ -23,14 +23,12 @@ module forwarding_unit(
     forward_a = 2'b00;
     forward_b = 2'b00;
 
-    // Forward A
     if (ex_mem_reg_write && (ex_mem_rd != 0) && (ex_mem_rd == rs1)) begin
       forward_a = 2'b10;
     end else if (mem_wb_reg_write && (mem_wb_rd != 0) && (mem_wb_rd == rs1)) begin
       forward_a = 2'b01;
     end
 
-    // Forward B
     if (!is_type_i) begin
       if (ex_mem_reg_write && (ex_mem_rd != 0) && (ex_mem_rd == rs2)) begin
         forward_b = 2'b10;
