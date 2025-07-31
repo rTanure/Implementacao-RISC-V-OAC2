@@ -8,8 +8,10 @@
 `include "./risc_v_blocks/alu/alu.v"
 
 `include "./basic_blocks/mux_2_to_1/mux_2_to_1.v"
+`include "./basic_blocks/mux_4_to_1/mux_4_to_1.v"
 
 `include "./risc_v_blocks/data_memory/data_memory.v"
+`include "./risc_v_blocks/forwarding_unit/forwarding_unit.v"
 
 `include "./risc_v_blocks/pipeline_reg/if_id_reg.v"
 `include "./risc_v_blocks/pipeline_reg/id_ex_reg.v"
@@ -132,6 +134,11 @@ module cpu_com_pipeline(
   wire [31:0] read_data_a_ex;
   wire [31:0] read_data_b_ex;
   wire [31:0] immediate_ex;
+
+  wire [4:0] rd_ex;
+  wire [4:0] rs1_ex;
+  wire [4:0] rs2_ex;
+  
   
 
   id_ex_reg id_ex (
@@ -150,6 +157,9 @@ module cpu_com_pipeline(
     .read_data_b_in(read_data_b),
     .immediate_in(immediate),
     .instruction_in(instruction_id),
+    .rd_in(rd_id),
+    .rs1_in(rs1_id),
+    .rs2_in(rs2_id),
 
     .pc_in(pc_id),
 
@@ -161,6 +171,9 @@ module cpu_com_pipeline(
     .mem_write_out(memWrite_ex),
     .alu_src_a_out(aluSrcA_ex),
     .reg_write_out(regWrite_ex),
+    .rd_out(rd_ex),
+    .rs1_out(rs1_ex),
+    .rs2_out(rs2_ex),
 
     .pc_out(pc_ex),
 
@@ -183,6 +196,13 @@ module cpu_com_pipeline(
     .out(alu_reg_b)
   );
 
+  always @(posedge clk, rst) begin
+    $display("%d", read_data_b_ex);
+    $display("%d", immediate_ex);
+    $display("%d", aluSrcA_ex);
+    $display("%d", alu_reg_b);
+  end
+
   wire [3:0] alu_operation;
 
   // Controlador da ALU
@@ -196,15 +216,53 @@ module cpu_com_pipeline(
   wire [31:0] alu_result;
   wire alu_zero;
 
+  wire [31:0] alu_operand_a;
+  wire [31:0] alu_operand_b;
+
+  wire [1:0] forward_a;
+  wire [1:0] forward_b;
+
+  mux_4_to_1 mux_alu_a (
+    .input_0(read_data_a_ex),
+    .input_1(alu_result_mem),
+    .input_2(write_data),
+    .input_3(32'b0),
+    .sel(forward_a),
+    .out(alu_operand_a)
+  );
+
+  mux_4_to_1 mux_alu_b (
+    .input_0(alu_reg_b),
+    .input_1(alu_result_mem),
+    .input_2(write_data),
+    .input_3(32'b0),
+    .sel(forward_b),
+    .out(alu_operand_b)
+  );
+
   alu alu (
-    .op_a(read_data_a_ex),
-    .op_b(alu_reg_b),
+    .op_a(alu_operand_a),
+    .op_b(alu_operand_b),
     .alu_op(alu_operation),
     .result(alu_result),
     .zero(alu_zero)
   );
 
+  
+
   assign pc_branch = pc_ex + (immediate_ex << 1);
+
+  forwarding_unit fwd_unit (
+    .rs1(rs1_ex),
+    .rs2(rs2_ex),
+    .ex_mem_rd(rd_mem),
+    .mem_wb_rd(rd_wb),
+    .ex_mem_reg_write(reg_write_mem),
+    .mem_wb_reg_write(reg_write_wb),
+
+    .forward_a(forward_a),
+    .forward_b(forward_b)
+  );
 
   // ============================================
   // MEM - Memory Access
@@ -220,10 +278,11 @@ module cpu_com_pipeline(
   wire alu_zero_mem;
   wire [31:0] read_data_b_mem;
   wire [31:0] instruction_mem;
+  wire [4:0] rd_mem;
 
   ex_mem_reg ex_mem (
     .clk(clk),
-    .rst(0),
+    .rst(1'b0),
 
     .branch_in(branch_ex),
     .mem_read_in(memRead_ex),
@@ -235,6 +294,7 @@ module cpu_com_pipeline(
     .alu_result_in(alu_result),
     .alu_zero_in(alu_zero),
     .read_data_b_in(read_data_b_ex),
+    .rd_in(rd_ex),
 
     .instruction_in(instruction_ex),
 
@@ -243,6 +303,7 @@ module cpu_com_pipeline(
     .mem_to_reg_out(mem_to_reg_mem),
     .mem_write_out(mem_write_mem),
     .reg_write_out(reg_write_mem),
+    .rd_out(rd_mem),
 
     .sum_pc_out(sum_pc_mem),
     .alu_result_out(alu_result_mem),
@@ -276,7 +337,7 @@ module cpu_com_pipeline(
 
   mem_wb_reg mem_wb (
     .clk(clk),
-    .rst(0),
+    .rst(1'b0),
 
     .mem_to_reg_in(mem_to_reg_mem),
     .reg_write_in(reg_write_mem),
@@ -284,13 +345,15 @@ module cpu_com_pipeline(
     .read_data_in(extended_read_data),
     .alu_result_in(alu_result_mem),
     .instruction_in(instruction_mem),
+    .rd_in(rd_mem),
 
     .mem_to_reg_out(mem_to_reg_wb),
     .reg_write_out(reg_write_wb),
 
     .read_data_out(read_data_wb),
     .alu_result_out(alu_result_wb),
-    .instruction_out(instruction_wb)
+    .instruction_out(instruction_wb),
+    .rd_out(rd_wb)
   );
 
 
@@ -331,7 +394,8 @@ module cpu_com_pipeline(
       // EX - Execute
       // ==========================
       $display("====== EX : %h", instruction_ex);
-      $display("ALU Control     : %04b", alu_operation);
+      $display("ALU Control     : %02b", alu_operation);
+      $display("ALU Operation   : %04b", alu_operation);
       $display("Operands:");
       $display("  op_a          : %032b", read_data_a_ex);
       $display("  alu src       : %032b", aluSrcA_ex);
