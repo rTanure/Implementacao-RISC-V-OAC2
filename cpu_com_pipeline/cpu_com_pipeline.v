@@ -253,6 +253,7 @@ module cpu_com_pipeline(
   assign pc_branch = pc_ex + (immediate_ex << 1);
 
   forwarding_unit fwd_unit (
+    .instruction(instruction_ex),
     .rs1(rs1_ex),
     .rs2(rs2_ex),
     .ex_mem_rd(rd_mem),
@@ -397,9 +398,9 @@ module cpu_com_pipeline(
       $display("ALU Control     : %02b", alu_operation);
       $display("ALU Operation   : %04b", alu_operation);
       $display("Operands:");
-      $display("  op_a          : %032b", read_data_a_ex);
+      $display("  op_a          : %032b", alu_operand_a);
       $display("  alu src       : %032b", aluSrcA_ex);
-      $display("  op_b (MUX)    : %032b", alu_reg_b);
+      $display("  op_b (MUX)    : %032b", alu_operand_b);
       $display("ALU Result      : %032b", alu_result);
 
       // ==========================
