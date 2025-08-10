@@ -224,8 +224,8 @@ module cpu_com_pipeline(
 
   mux_4_to_1 mux_alu_a (
     .input_0(read_data_a_ex),
-    .input_1(alu_result_mem),
-    .input_2(write_data),
+    .input_1(write_data),
+    .input_2(alu_result_mem),
     .input_3(32'b0),
     .sel(forward_a),
     .out(alu_operand_a)
@@ -233,8 +233,8 @@ module cpu_com_pipeline(
 
   mux_4_to_1 mux_alu_b (
     .input_0(alu_reg_b),
-    .input_1(alu_result_mem),
-    .input_2(write_data),
+    .input_1(write_data),
+    .input_2(alu_result_mem),
     .input_3(32'b0),
     .sel(forward_b),
     .out(alu_operand_b)
