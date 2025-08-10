@@ -189,13 +189,6 @@ module cpu_com_pipeline(
   // Entrada B será o dado lido do banco de registradores ou o imediato
   wire [31:0] alu_reg_b;
 
-  mux_2_to_1 mux_reg_alu (
-    .input_0(read_data_b_ex),
-    .input_1(immediate_ex),
-    .sel(aluSrcA_ex),
-    .out(alu_reg_b)
-  );
-
   always @(posedge clk, rst) begin
     $display("%d", read_data_b_ex);
     $display("%d", immediate_ex);
@@ -232,11 +225,18 @@ module cpu_com_pipeline(
   );
 
   mux_4_to_1 mux_alu_b (
-    .input_0(alu_reg_b),
+    .input_0(read_data_b_ex),
     .input_1(write_data),
     .input_2(alu_result_mem),
     .input_3(32'b0),
     .sel(forward_b),
+    .out(alu_reg_b)
+  );
+
+  mux_2_to_1 mux_reg_alu (
+    .input_0(alu_reg_b),
+    .input_1(immediate_ex),
+    .sel(aluSrcA_ex),
     .out(alu_operand_b)
   );
 
@@ -294,7 +294,7 @@ module cpu_com_pipeline(
     .sum_pc_in(pc_branch),
     .alu_result_in(alu_result),
     .alu_zero_in(alu_zero),
-    .read_data_b_in(read_data_b_ex),
+    .read_data_b_in(alu_reg_b),
     .rd_in(rd_ex),
 
     .instruction_in(instruction_ex),
