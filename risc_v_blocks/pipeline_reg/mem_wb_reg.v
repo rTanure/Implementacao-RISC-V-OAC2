@@ -1,18 +1,14 @@
 module mem_wb_reg (
   input clk,
   input rst,
-
   input mem_to_reg_in,
   input reg_write_in,
-
   input [31:0] read_data_in,
   input [31:0] alu_result_in,
   input [31:0] instruction_in,
   input [4:0] rd_in,
-
   output reg mem_to_reg_out,
   output reg reg_write_out,
-
   output reg [31:0] read_data_out,
   output reg [31:0] alu_result_out,
   output reg [31:0] instruction_out,
