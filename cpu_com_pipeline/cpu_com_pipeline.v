@@ -290,7 +290,10 @@ module cpu_com_pipeline(
     .rs1_ex(rs1_id),
     .rs2_ex(rs2_id),
     .rd_mem(rd_ex),
-    .stall(stall)
+    .alu_zero_mem(alu_zero_mem),
+    .branch_mem(branch_mem),
+    .stall(stall),
+    .pc_src(pc_src)
   );
 
   // ============================================
@@ -355,8 +358,6 @@ module cpu_com_pipeline(
     .write_data(read_data_b_mem[7:0]),
     .read_data(read_data)
   );
-
-  assign pc_src = alu_zero_mem & branch_mem;
 
   wire mem_to_reg_wb;
   wire reg_write_wb;
