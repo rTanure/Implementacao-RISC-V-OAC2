@@ -18,11 +18,16 @@
 `include "./risc_v_blocks/pipeline_reg/ex_mem_reg.v"
 `include "./risc_v_blocks/pipeline_reg/mem_wb_reg.v"
 
+`include "./risc_v_blocks/hazard_detection_unit/hazard_detection_unit.v"
+
 module cpu_com_pipeline(
   input clk,
   input rst
 );
   wire flush = pc_src;
+
+  assign flush_if_id = flush || stall;
+  assign flush_id_ex = flush;
 
   // =========================================
   // IF - Instruction Fetch
@@ -38,8 +43,18 @@ module cpu_com_pipeline(
     .instruction_data(instruction)
   );
 
-  mux_2_to_1 mux_pc (
+  wire [31:0] pc_plus;
+
+  mux_2_to_1 mux_pc_plus (
     .input_0(pc + 4),
+    .input_1(pc),
+    .sel(stall),
+    .out(pc_plus)
+  );
+
+
+  mux_2_to_1 mux_pc (
+    .input_0(pc_plus),
     .input_1(sum_pc_mem),
     .sel(pc_src),
     .out(pc_next)
@@ -60,9 +75,11 @@ module cpu_com_pipeline(
   wire [31:0] pc_id;
   wire [31:0] instruction_id;
 
+  wire flush_if_id;
+
   if_id_reg if_id (
     .clk(clk),
-    .rst(flush),
+    .rst(flush_if_id),
     .pc_in(pc),
     .instruction_in(instruction),
     .pc_out(pc_id),
@@ -139,11 +156,11 @@ module cpu_com_pipeline(
   wire [4:0] rs1_ex;
   wire [4:0] rs2_ex;
   
-  
+  wire flush_id_ex;
 
   id_ex_reg id_ex (
     .clk(clk),
-    .rst(flush),
+    .rst(flush_id_ex),
 
     .branch_in(branch),
     .mem_read_in(memRead),
@@ -263,6 +280,16 @@ module cpu_com_pipeline(
 
     .forward_a(forward_a),
     .forward_b(forward_b)
+  );
+
+  wire stall;
+
+  hazard_detection_unit hazard_unit (
+    .instruction(instruction_ex),
+    .rs1_ex(rs1_id),
+    .rs2_ex(rs2_id),
+    .rd_mem(rd_ex),
+    .stall(stall)
   );
 
   // ============================================
