@@ -26,7 +26,7 @@ module cpu_com_pipeline(
 );
   wire flush = pc_src;
 
-  assign flush_if_id = flush || stall;
+  assign flush_if_id = flush;
   assign flush_id_ex = flush;
 
   // =========================================
@@ -80,6 +80,7 @@ module cpu_com_pipeline(
   if_id_reg if_id (
     .clk(clk),
     .rst(flush_if_id),
+    .stall(stall),
     .pc_in(pc),
     .instruction_in(instruction),
     .pc_out(pc_id),

@@ -1,6 +1,7 @@
 module if_id_reg (
   input clk,
   input rst,
+  input stall,
 
   input [31:0] instruction_in,
   input [31:0] pc_in,
@@ -12,6 +13,9 @@ module if_id_reg (
     if (rst) begin
       instruction_out <= 32'b0;
       pc_out <= 32'b0;
+    end else if (stall) begin
+      instruction_out <= instruction_out;
+      pc_out <= pc_out;
     end else begin
       instruction_out <= instruction_in;
       pc_out <= pc_in;
