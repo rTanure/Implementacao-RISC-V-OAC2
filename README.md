@@ -13,6 +13,20 @@ ex: iverilog -Wall -o instruction_memory_tb.vvp instruction_memory_tb.v instruct
 
 # Código ASM utilizado para teste
 
+ori x2, x0, 7
+sb x2, 4(x0)
+lb x1, 4(x0) 
+add x1, x1, x2 
+add x1, x1, x2
+sub x1, x1, x2
+sub x1, x1, x2
+beq x1, x2, 12
+add x1, x1, x1
+sb x1, 0(x0)
+and x1, x1, x2
+or x1, x1, x0
+sb x1, 0(x0)
+
 # Código binário utilizado para Teste
 
 00000000011100000110000100010011
